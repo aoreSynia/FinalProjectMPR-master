@@ -29,17 +29,17 @@ const ManageLabelsScreen = ({ navigation, route }) => {
 
   // function to render labels
   const renderLabel = ({ item }) => (
-    <View
-      style={
-        highlightedLabels.includes(item)
-          ? styles.highlightedLabelTag
-          : styles.labelTag
-      }
+    <Pressable
+      style={[
+        styles.labelTag,
+        highlightedLabels.includes(item) && styles.highlightedLabelTag,
+      ]}
+      onPress={() => toggleLabel(item)}
     >
-      <Pressable onPress={() => toggleLabel(item)}>
-        <Text>{item}</Text>
-      </Pressable>
-    </View>
+      <Text style={highlightedLabels.includes(item) ? styles.highlightedLabelText : styles.labelText}>
+        {item}
+      </Text>
+    </Pressable>
   );
 
   // function to handle submit
@@ -62,58 +62,63 @@ const ManageLabelsScreen = ({ navigation, route }) => {
         renderItem={renderLabel}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
-        style={styles.labelsContainer}
+        contentContainerStyle={styles.labelsContainer}
       />
       {/* IconButton to submit the labels */}
-      <IconButton
-        icon="checkmark"
-        size={24}
-        color="white"
-        onPress={submitHandler}
-        style={styles.submitButton}
-      />
+      <View style={styles.submitButtonContainer}>
+        <IconButton
+          icon="checkmark"
+          size={24}
+          color="white"
+          onPress={submitHandler}
+          style={styles.submitButton}
+        />
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#f8f8f8",
+  },
   labelsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginBottom: 10,
+    paddingBottom: 100, // Ensure space for the submit button
   },
   labelTag: {
     backgroundColor: "#e0e0e0",
     borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    marginRight: 5,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    margin: 5,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    width: SCREEN_WIDTH / 2,
-    margin: 5,
+    maxWidth: SCREEN_WIDTH / 2 - 20, // Adjust width for better spacing
   },
   highlightedLabelTag: {
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    marginRight: 5,
-    flex: 1,
-    width: SCREEN_WIDTH / 2,
-    justifyContent: "center",
-    alignItems: "center",
     backgroundColor: "skyblue",
-    margin: 5,
   },
-  container: {
-    flex: 1,
+  labelText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  highlightedLabelText: {
+    fontSize: 16,
+    color: "white",
+  },
+  submitButtonContainer: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#657ADD",
+    borderRadius: 30,
     padding: 10,
   },
   submitButton: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
+    backgroundColor: "transparent",
   },
 });
 

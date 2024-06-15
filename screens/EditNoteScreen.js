@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   labelsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: 10,
+    marginBottom: -100,
   },
 });
 

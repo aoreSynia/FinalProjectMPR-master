@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { UnifiedContext } from "../components/context/Context";
 import Icon from 'react-native-vector-icons/Ionicons';
+import NoteCard from '../components/ui/NoteCard'; // Import NoteCard
 
 const HomeScreen = ({ navigation }) => {
     const { notes, labels } = useContext(UnifiedContext);
@@ -62,42 +63,17 @@ const HomeScreen = ({ navigation }) => {
         }
     };
 
-    const renderNoteItem = (itemData) => {
-        const {
-            id,
-            color,
-            labelIds = [], 
-            content,
-            updateAt,
-            isBookmarked
-        } = itemData.item;
+    const handleNotePress = (id) => {
+        navigation.navigate('EditNote', { noteId: id });
+    };
 
-        const noteLabels = (labelId) => {
-            const label = labels.find((label) => label.id === labelId); 
-            return label ? label.label : '';
-        };
-
+    const renderNoteItem = ({ item }) => {
         return (
-            <TouchableOpacity
-                onPress={() => navigation.navigate('EditNote', {noteId: id})}
-                style={[
-                styles.noteItem, {
-                    backgroundColor: color || '#ccc'
-                }
-            ]}>
-                <Text style={styles.noteDate}>{new Date(updateAt).toLocaleString()}</Text>
-                <View style={styles.labelsContainer}>
-                    {labelIds && labelIds.map((labelId, index) => (
-                        <View key={index} style={styles.labelTag}>
-                            <Text style={styles.labelText}>{noteLabels(labelId)}</Text>
-                        </View>
-                    ))}
-                </View>
-                {notes.length > 0 ? <Text style={styles.noteContent}>{content}</Text>
-                : <Text style={styles.noteContent}>No notes found!</Text>
-                }
-                {isBookmarked && <Text style={styles.bookmarked}>★</Text>}
-            </TouchableOpacity>
+            <NoteCard
+                {...item}
+                labels={labels}
+                onPress={handleNotePress}
+            />
         );
     };
 
@@ -107,7 +83,9 @@ const HomeScreen = ({ navigation }) => {
                 ? (<FlatList
                     data={filteredNotes}
                     keyExtractor={(item) => item.id}
-                    renderItem={renderNoteItem}/>)
+                    renderItem={renderNoteItem}
+                    contentContainerStyle={styles.flatListContent}
+                />)
                 : (
                     <View style={styles.notFoundContainer}>
                         <Text style={styles.notFoundText}>Not found!</Text>
@@ -133,44 +111,6 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: '#fff'
     },
-    noteItem: {
-        padding: 15,
-        marginVertical: 10,
-        borderRadius: 10
-    },
-    noteDate: {
-        fontSize: 12,
-        color: '#666',
-        marginBottom: 5
-    },
-    labelsContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        marginBottom: 10
-    },
-    labelTag: {
-        backgroundColor: '#e0e0e0',
-        borderRadius: 10,
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        marginRight: 5,
-        marginBottom: 5
-    },
-    labelText: {
-        fontSize: 12,
-        color: '#333'
-    },
-    noteContent: {
-        fontSize: 16,
-        fontWeight: 'bold'
-    },
-    bookmarked: {
-        fontSize: 18,
-        color: '#FFD700', 
-        marginTop: 10,
-        position: 'absolute',
-        right: 15,
-    },
     notFoundContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -194,7 +134,10 @@ const styles = StyleSheet.create({
     addButtonText: {
         color: '#fff',
         fontSize: 24
-    }
+    },
+    flatListContent: {
+        paddingHorizontal: 10,
+    },
 });
 
 export default HomeScreen;
